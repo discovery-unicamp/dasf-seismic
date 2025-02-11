@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "dasf-seismic"
+version = "1.0.beta.5"
+description = "DASF module for Seismic Computation"
+authors = ["Julio Faracco <jcfaracco@gmail.com>"]
+maintainers = ["Julio Faracco <jcfaracco@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/lmcad-unicamp/dasf-seismic"
+repository = "https://github.com/lmcad-unicamp/dasf-seismic"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Beta",
+    "Environment :: GPU :: NVIDIA CUDA",
+]
+readme="README.md"
+exclude = ["tests/*", "docs/*"]
+packages = [
+    {include = "dasf_seismic"}
+]
+
+[tool.poetry.dependencies]
+dasf = { git = "https://github.com/discovery-unicamp/dasf-core.git", branch = "main" }
+glcm-cupy = { git = "https://github.com/SerodioJ/glcm-cupy.git", branch = "stable" }
+multidimio = "^0.4.2"
+python = "^3.8"
+scikit-image = "*"
+
+[tool.poetry.dev-dependencies]
+flake8 = "*"
+mock = "*"
+parameterized = "*"
+paramiko = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-benchmark = "*"
+wheel = "*"
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.paths]
+source = ["dasf_seismic", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["dasf_seismic"]
+
+[build-system]
+requires = ["poetry-core>=1.1.10"]
+build-backend = "poetry.core.masonry.api"
