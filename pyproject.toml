@@ -27,8 +27,8 @@ packages = [
 [tool.poetry.dependencies]
 dasf = { git = "https://github.com/discovery-unicamp/dasf-core.git", branch = "main" }
 glcm-cupy = { git = "https://github.com/SerodioJ/glcm-cupy.git", branch = "stable" }
-multidimio = "^0.4.2"
-python = "^3.8"
+multidimio = ">=0.4.2"
+python = ">3.9"
 scikit-image = "*"
 
 [tool.poetry.dev-dependencies]
