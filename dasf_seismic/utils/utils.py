@@ -47,9 +47,9 @@ def dask_overlap(array,
             else:
                 raise ValueError('The kernel parameter should have length=3 '
                                  f'(current={len(kernel)}')
-        ret = da.overlap.overlap(array, depth=axes, boundary=boundary)
+        return da.overlap.overlap(array, depth=axes, boundary=boundary)
 
-    return ret
+    return array
 
 
 def dask_trim_internal(array, kernel, axes=None, boundary='reflect'):
