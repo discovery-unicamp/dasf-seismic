@@ -83,3 +83,30 @@ def dask_trim_internal(array, kernel, axes=None, boundary='reflect'):
     axes = {0: axes[0], 1: axes[1], 2: axes[2]}
 
     return da.overlap.trim_internal(array, axes=axes, boundary=boundary)
+
+
+def is_boundary(block_info):
+    """
+    Description
+    -----------
+    Checks if current block is a boundary block
+
+    Parameters
+    ----------
+    list: block info list of dictionaries
+
+    Returns
+    -------
+    list : List of tuple of booleans indicating whether the block is a boundary block in a given axis.
+    """
+    num_chunks = block_info[0]["num-chunks"]
+    cur_chunk = block_info[0]["chunk-location"]
+    boundary = []
+    for cur, max_id in zip(cur_chunk, num_chunks):
+        boundary.append(
+            (
+                cur == 0,
+                cur == max_id -1
+            )
+        )
+    return boundary

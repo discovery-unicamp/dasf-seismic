@@ -25,27 +25,6 @@ from skimage.feature import local_binary_pattern
 from dasf_seismic.utils.utils import dask_overlap, dask_trim_internal
 
 
-def glcm_mean(glcm):
-    i = np.ogrid[0:len(glcm)]
-    return np.sum(i*glcm, axis=(0, 1))
-
-
-def glcm_var(glcm):
-    mean = glcm_mean(glcm)
-    i = np.ogrid[0:len(glcm)]
-    return np.sum(glcm*((i-mean)**2).T, axis=(0, 1))
-
-
-def glcm_std(glcm):
-    var = glcm_var(glcm)
-    return np.sqrt(var)
-
-
-def glcm_entropy(glcm):
-    ln = -np.log(glcm, where=(glcm != 0), out=np.zeros_like(glcm))
-    return np.sum(glcm*ln, axis=(0, 1))
-
-
 def get_glcm_gpu_feature(glcm_type):
     if glcm_type == "contrast":
         return glcm_features.CONTRAST
@@ -59,7 +38,7 @@ def get_glcm_gpu_feature(glcm_type):
         return glcm_features.MEAN
     elif glcm_type == "correlation":
         return glcm_features.CORRELATION
-    elif glcm_type == "var" or glcm_type == "std":
+    elif glcm_type == "variance" or glcm_type == "std":
         return glcm_features.VARIANCE
     elif glcm_type == "entropy":
         return glcm_features.ENTROPY
@@ -104,13 +83,6 @@ class GLCMGeneric(Transform):
     def _operation_cpu(self, block, glcm_type_block, levels_block,
                        direction_block, distance_block, window, glb_mi, glb_ma,
                        pad=False):
-        funcs = {
-            "entropy": glcm_entropy,
-            "std": glcm_std,
-            "var": glcm_var,
-            "mean": glcm_mean
-        }
-        custom_func = funcs.get(glcm_type_block, None)
 
         assert len(window) == 2
         kh, kw = np.array(window)//2
@@ -144,11 +116,8 @@ class GLCMGeneric(Transform):
                                         symmetric=True, normed=True)
 
                     # Calculate property and replace center pixel
-                    if custom_func:
-                        res = custom_func(glcm[:, :, 0, 0])
-                    else:
-                        res = graycoprops(glcm, glcm_type_block)
-                    new_att[i, j] = res
+                    res = graycoprops(glcm, glcm_type_block)
+                    new_att[i, j] = res[0, 0]
 
             new_atts.append(new_att.astype(block.dtype))
         result = np.asarray(new_atts, dtype=block.dtype)
@@ -325,7 +294,7 @@ class GLCMHomogeneity(GLCMGeneric):
 class GLCMVariance(GLCMGeneric):
     def __init__(self, levels=16, direction=np.pi/2, distance=1,
                  window=(7, 7), glb_mi=None, glb_ma=None):
-        super().__init__(glcm_type="var", levels=levels,
+        super().__init__(glcm_type="variance", levels=levels,
                          direction=direction, distance=distance,
                          window=window, glb_mi=glb_mi, glb_ma=glb_ma)
 
