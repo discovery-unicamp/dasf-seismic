@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import warnings
 import dask.array as da
 import numpy as np
+import warnings
 
 try:
     import cupy as cp
