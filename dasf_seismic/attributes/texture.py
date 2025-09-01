@@ -2,6 +2,7 @@
 
 import dask.array as da
 import numpy as np
+import warnings
 
 try:
     import cupy as cp
@@ -375,7 +376,7 @@ class LocalBinaryPattern2D(Transform):
 
 
 class LocalBinaryPattern3D(Transform):
-    def __init__(self, method="diagonal", use_unique=True):
+    def __init__(self, method="diagonal", use_unique=False):
         super().__init__()
 
         self._method = method
@@ -548,6 +549,8 @@ class LocalBinaryPattern3D(Transform):
         result = dask_trim_internal(result, kernel)
 
         if self._use_unique:
+            warnings.warn("Lazy LBP3D with unique computation may fail due to Dask's shuffle change")
+
             unique = da.unique(result)
 
             result = result.map_blocks(self._operation_unique, unique,
@@ -569,6 +572,7 @@ class LocalBinaryPattern3D(Transform):
         result = dask_trim_internal(result, kernel)
 
         if self._use_unique:
+            warnings.warn("Lazy LBP3D with unique computation may fail due to Dask's shuffle change")
             unique = da.unique(result)
 
             result = result.map_blocks(self._operation_unique, unique,
